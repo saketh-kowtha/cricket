@@ -1,0 +1,24 @@
+	<div ng-if="page=='inning_break'" style="text-align: center;">
+		<div class="row">
+			<div ng-repeat="x in teamplayer[batting]" class="col-lg-6">
+				<label >
+					<label ng-if="x.wicket==undefined">*</label>{{x.name}}
+				</label>
+				<label >
+					{{x.runs}}
+				</label>
+				<label >
+					{{x.balls}}
+				</label>
+				<label ng-if="x.wicket != undefined">
+					<label ng-if="x.wicket !=undefined">(B) {{x.wicket}}</label>
+					<label ng-if="x.throw !=undefined">runout {{x.throw}}</label>
+					<label ng-if="x.catch !=undefined">(C) {{x.catch}}</label>
+					<label ng-if="x.stump !=undefined">{{x.stump}}</label>
+				</label>
+			</div>
+		</div>
+		<div class="row">
+			<button class ="btn btn-warning col-lg-1 col-lg-offset-6" ng-click="navigate('p3')">Go!</button>
+		</div>
+	</div>

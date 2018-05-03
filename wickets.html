@@ -1,0 +1,15 @@
+<div ng-if="page=='wickets'">
+		<select ng-model="ipbat">
+			<option value="{{striker}}">{{teamplayer[batting][striker].name}}</option>
+			<option value="{{nonstriker}}">{{teamplayer[batting][nonstriker].name}}</option>
+		</select>
+		<select ng-model="ipbol">
+			<option ng-repeat="(y,x) in teamplayer[bowling]" ng-if="y != bowler" value="{{y}}" >{{x.name}}</option>
+		</select>
+		<input type="number" ng-model="runs">
+		<button ng-click="out('wicket',null,0,null)" >Wicket/Lbw</button>
+		<button ng-click="out('catch',ipbol,runs,null)" >Catch</button><!-- ip for catcher runs for runs -->
+		<button ng-click="out('stump',null,0,null)" >Stump</button>
+		<button ng-click="out('runout',ipbol,runs,ipbat)" >Run Out</button><!-- ip for thrower runs for runs -->
+
+	</div>

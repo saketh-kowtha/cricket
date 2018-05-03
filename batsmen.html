@@ -1,0 +1,27 @@
+	<div ng-if="page=='batsmen'" style="text-align: center;">
+		<!-- Opening Selection -->
+
+		<div ng-if="selection == 2" class="row">
+			<div class="col-lg-2 col-lg-offset-1">	
+				<h4>Opener-1</h4>
+				<select   ng-model="m">
+					<option ng-repeat="(y,x) in teamplayer[batting]" ng-if="x.visited==false" value="{{y}}" >{{x.name}}</option>
+				</select>
+			</div>
+			<div class="col-lg-2 col-lg-offset-6">	
+				<h4>Opener-2</h4>
+				<select  ng-model="n">
+					<option ng-repeat="(y,x) in teamplayer[batting]" ng-if="x.visited==false"  value="{{y}}" >{{x.name}}</option>
+				</select>
+			</div>
+			<div class="col-lg-2 col-lg-offset-5">	
+				<h4>Bowler</h4>
+				<select ng-model="o">
+					<option ng-repeat="(y,x) in teamplayer[bowling]" value="{{y}}" >{{x.name}}</option>
+				</select>
+			</div>
+			<div class="col-lg-2 col-lg-offset-5" style="text-align: center;">	
+				<br><br><br><center>
+				<button class="btn btn-info" ng-click="set(m,n,o,'opening')">Go!</button></center>
+			</div>
+		</div>

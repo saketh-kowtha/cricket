@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+	<!-- ANGULAR JS CDN -->
+	<script type="text/javascript" src="angular.min.js"></script>
+	<!-- JQUERY SCRIPT FILE -->
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<!-- BOOTSTRAP CDN -->
+	<script type="text/javascript" src="bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+	<!-- EXTERNAL SCRIPT FILE -->
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<!-- EXTERNAL SCRIPT FILE -->
+	<script type="text/javascript" src="script.js"></script>
+	<!-- EXTERNAL STYLE SHEET -->
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<!--   Controller named cricket     -->
+<body ng-controller="cricket">
+	<!--  Page-1 (Team A , Team B ) list , captian and wikikeeper selection -->
+	<!-- 
+
+	-->
+	<div ng-if="page=='p1'">	
+		<div class="row">
+			<div for="team" ng-repeat="t in [0,1]" class="col-lg-6 player_names">
+				<div ng-if="t==0">
+					<h3>{{team['teama']['name'] | uppercase}}</h3>
+					<label>Enter Your Team Name</label><br>
+					<input type="text" ng-model="team['teama']['name']" placeholder="Enter Team Name" required="yes"><br>
+					<label>Enter {{team['teama']['name']}} team Players Names</label><br>
+			  	</div>
+			  	<div ng-if="t==1">
+					<h3>{{team['teamb']['name'] | uppercase}}</h3>
+					<label>Enter Your Team Name</label><br>
+					<input type="text" ng-model="team['teamb']['name']" placeholder="Enter Team Name" required="yes"><br>
+					<label>Enter {{team['teamb']['name']}} team Players Names</label><br>
+			  	</div>
+			  	<div for="getting_player_names" ng-repeat="p in [0,1,2,3,4,5,6,7,8,9,10]">
+					<div ng-if="t==0">
+			  			<input type="text" ng-model="teamplayer.teama[p].name" placeholder="Player {{p+1}}" required="yes">
+			  		</div>
+			  		<div ng-if="t==1">
+			  			<input type="text" ng-model="teamplayer.teamb[p].name" placeholder="Player {{p+1}}" required="yes">
+			  		</div>
+			  	</div>
+				<div ng-if="t==0">
+				  	<label>Enter {{team['teama']['name']}} Captian Name</label><br>
+				  	<select ng-model="team['teama']['captian']">
+						<option ng-repeat="x in teamplayer.teama" value="{{x.name}}">{{x.name}}</option>
+					</select><br>
+				  	<label>Captian : {{team['teama']['captian']}}</label><br>
+				  	<label>Enter {{team['teama']['name']}} Wiki Name</label><br>
+				  	<select ng-model="team['teama']['wiki']">
+						<option ng-repeat="x in teamplayer.teama" value="{{x.name}}">{{x.name}}</option>
+					</select><br>
+				  	<label>Wiki : {{team['teama']['wiki']}}</label>
+			  	</div>
+			  	<div ng-if="t==1">
+					<label>Enter {{team['teamb']['name']}} Captian Name</label><br>
+					<select ng-model="team['teamb']['captian']">
+						<option ng-repeat="x in teamplayer.teamb" value="{{x.name}}">{{x.name}}</option>
+					</select><br>
+				  	<label>Captian : {{team['teamb']['wiki']}}</label><br>
+				  	<label>Enter {{team['teamb']['name']}} Wiki Name</label><br>
+					<select ng-model="team['teamb']['wiki']">
+						<option ng-repeat="x in teamplayer.teamb" value="{{x.name}}">{{x.name}}</option>
+					</select><br>
+				  	<label>Wiki : {{team['teamb']['wiki']}}</label>
+				</div>
+			</div>
+			<div class="row">
+				<button class="btn btn-info col-lg-1 col-lg-offset-6" ng-click="navigate('p2')">Go!</button>
+			</div>
+		</div>
+	</div>
+	<!-- Page-1 Ends -->
+
+	<!-- Page-2 starts (Toss section) -->
+	<div ng-if="page=='p2'" style="text-align: center;">
+		<div ng-show="!toss">
+			<h1>Choose Your Choice {{team['teama'].name}}</h1><br>
+			<button type="button" class="btn btn-default btn-circle toss" ng-click="tossfun('head')"><h3>Heads</h3></button>
+			<button type="button" class="btn btn-default btn-circle toss" ng-click="tossfun('tail')"><h3>Tails</h3></button>
+			<br>
+			<select ng-options = "x for x in [2,5,10,15,20,25,30,35,40,45,50]" ng-model="opt">
+			</select>
+		</div>
+		<label ng-if="toss">{{toss}}  Your Team Won the Toss Choose Your Choice</label><br>
+		<div ng-if="toss != undefined" class="row" style="text-align: center;">
+			<div class="col-lg-4 col-lg-offset-2">
+				<img ng-src="http://www.pngmart.com/files/4/Cricket-Bat-PNG-Image.png" ng-click="setteam('batting')" width="100%" height="50%">
+			</div>
+			<div class="col-lg-4 col-offset-2">
+				<br><br><br><br><br>
+				<img ng-src="http://gallery.yopriceville.com/downloadfullsize/send/8672" ng-click="setteam('bowling')" width="30%" height="30%">
+			</div>
+		</div>
+	</div>
+	<!--  Page-2 ends  -->
+	<!--  Page-3 starts (main page to display score) -->
+	<div ng-if="page=='p3'" class="row">
+		<div class="col-lg-6" for="player">
+		 	<h3 style="text-align: center;">{{team[batting].name}}</h3>
+			<div style="text-align: center;">
+		 		<label >*{{teamplayer[batting][striker].name}}</label>&nbsp;<label>{{teamplayer[batting][striker].runs}} &nbsp;({{teamplayer[batting][striker]['balls']}})</label><br>
+				<label>{{teamplayer[batting][nonstriker].name}}</label>&nbsp;<label>{{teamplayer[batting][nonstriker].runs}} &nbsp;({{teamplayer[batting][nonstriker]['balls']}})</label>
+			<br><br>
+			</div>
+			<div style="text-align: left;">	
+				<button class="btn btn-primary" ng-click="update(0)">0</button>
+				<button ng-click="update(1)" class="btn btn-primary">1</button>
+				<button ng-click="update(2)" class="btn btn-primary">2</button>
+				<button ng-click="update(3)" class="btn btn-primary">3</button>
+				<button ng-click="update(4)" class="btn btn-primary">4</button>
+				<button ng-click="update(5)" class="btn btn-primary">5</button>
+				<button ng-click="update(6)" class="btn btn-primary">6</button>
+				<button ng-click="navigate('wickets')" class="btn btn-warning">WKT</button>
+				<button ng-click="navigate('wide')" class="btn btn-success">Wide</button>
+			</div> <br>
+			<button ng-if="display_swap==true" ng-click="swap()" class="btn" class="col-lg-3">swap</button>
+		 </div>
+		<div class="col-lg-6" for="display score">
+			<h3>Score</h3>
+			{{team[batting]['score']}} - {{team[batting]['wickets']}} <br>
+			<h3>This Overs</h3>
+			Bowler {{teamplayer[bowling][bowler].name}}<br>
+			{{(thisover==0.6)? thisover+0.4 : thisover | number:1}} <label ng-repeat="a in overar">&nbsp;<label ng-if="a!=-1">{{(a==-2)?"WK/Lb":(a==0)?".":a}} &nbsp;{{$last?'':','}}</label></label>
+			<h3>Overs</h3>
+			{{overs | number:1}}
+		</div>
+		<div class="col-lg-6">
+			<label ng-if="Innigs==1">Target {{target}}<br>Required {{target-team[batting].score}} in {{limitedovers-overs}}</label>
+		</div>
+	</div>
+
+	<!--   Page-3 ends    --> 
+	<!-- batsmen selection-->
+
+	<div ng-if="page=='batsmen'" style="text-align: center;">
+		<!-- Opening Selection -->
+
+		<div ng-if="selection == 2" class="row">
+			<div class="col-lg-2 col-lg-offset-1">	
+				<h4>Opener-1</h4>
+				<select   ng-model="m">
+					<option ng-repeat="(y,x) in teamplayer[batting]" ng-if="x.visited==false" value="{{y}}" >{{x.name}}</option>
+				</select>
+			</div>
+			<div class="col-lg-2 col-lg-offset-6">	
+				<h4>Opener-2</h4>
+				<select  ng-model="n">
+					<option ng-repeat="(y,x) in teamplayer[batting]" ng-if="x.visited==false"  value="{{y}}" >{{x.name}}</option>
+				</select>
+			</div>
+			<div class="col-lg-2 col-lg-offset-5">	
+				<h4>Bowler</h4>
+				<select ng-model="o">
+					<option ng-repeat="(y,x) in teamplayer[bowling]" value="{{y}}" >{{x.name}}</option>
+				</select>
+			</div>
+			<div class="col-lg-2 col-lg-offset-5" style="text-align: center;">	
+				<br><br><br><center>
+				<button class="btn btn-info" ng-click="set(m,n,o,'opening')">Go!</button></center>
+			</div>
+		</div>
+		<!-- Only Bowler -->
+
+		<div ng-if="selection == 3" class="row">
+			<div class="col-lg-2 col-lg-offset-5">
+				<h4>Select Bowler</h4>
+				<select ng-model="bo">
+					<option ng-repeat="(y,x) in teamplayer[bowling]"  ng-if="x.name != previous_bowler" value="{{y}}" >{{x.name}}</option>
+				</select>
+				<button ng-click="set(undefined,undefined,bo,'bowler')">Go!</button>
+			</div>
+		</div>
+		<!-- Batsmen and Bowler -->
+
+		<div ng-if="selection == 4" class="row">
+			<div ng-if="thisover == 0.6" class="col-lg-2 col-lg-offset-5">
+				<h3>Select batsmen</h3>
+			  	<select ng-model="m">
+					<option ng-repeat="(y,x) in teamplayer[batting]" ng-if="x.visited==false" value="{{y}}">{{x.name}}</option>
+				</select><br>
+				<h3>Select Bowler</h3>
+				<select ng-model="bo">
+					<option ng-repeat="(y,x) in teamplayer[bowling]"  ng-if="x.name != previous_bowler" value="{{y}}" >{{x.name}}</option>
+				</select><br>
+				<button ng-click="set(m,undefined,bo,'bowbat')" >Go!</button>
+			</div>
+			<div ng-if = "thisover != 0.6" class="row col-lg-2 col-lg-offset-5">
+				<h3>Select batsmen</h3>
+			  	<select ng-model="m" class="col-lg-6">
+					<option ng-repeat="(y,x) in teamplayer[batting]" ng-if="x.visited==false" value="{{y}}">{{x.name}}</option>
+				</select>
+				<button ng-click="set(m,undefined,undefined,'wicket')" >Go!</button>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- batsmen selection ends -->
+	<!-- wicket section -->
+	<div ng-if="page=='wickets'">
+		<div ng-if="iscatch">
+			<label>Bowler Who Is Out</label>
+			<select ng-model="ipbol">
+				<option ng-repeat="(y,x) in teamplayer[bowling]"  value="{{y}}" >{{x.name}}</option>
+			</select>
+			<button ng-click="out('catch',ipbol,runs,null)">Go!</button>
+		</div>
+
+
+		<div ng-if="isstump">
+
+			<button ng-click="out('stump',null,0,null)">Go!</button>
+		</div>
+
+
+		<div ng-if="isrunout">
+			<input type="number" ng-model="runs" >
+			<select ng-model="ipbat">
+				<option value="{{striker}}">{{teamplayer[batting][striker].name}}</option>
+				<option value="{{nonstriker}}">{{teamplayer[batting][nonstriker].name}}</option>
+			</select>
+			<select ng-model="ipbol">
+				<option ng-repeat="(y,x) in teamplayer[bowling]" ng-if="y != bowler" value="{{y}}" >{{x.name}}</option>
+			</select>
+			<button ng-click="out('runout',ipbol,runs,ipbat)">Go!</button>
+		</div>
+		<button ng-click="out('wicket',null,0,null)" >Wicket/Lbw</button>
+		<button ng-click="iscatch = 1" >Catch</button><!-- ip for catcher runs for runs -->
+		<button ng-click="isstump = 1" >Stump</button>
+		<button ng-click="isrunout = 1" >Run Out</button><!-- ip for thrower runs for runs -->
+
+	</div>
+
+	<!-- wicket end -->
+	<!--   Page-4 starts Score board	 -->
+	<div ng-if="page=='p4'" class="row display">
+
+		<div ng-repeat="a in team">
+			<div ng-repeat = "b in a">
+				{{b}}
+			</div>
+		</div>
+		<div ng-repeat="a in teamplayer">
+			<div ng-repeat = "b in a">
+				{{b}}
+			</div>
+		</div>
+
+	</div>
+	<!-- Page-4 Ends  -->
+	<!-- choose batsmen -->
+	<div ng-if="page=='inning_break'" style="text-align: center;">
+		<div class="row">
+			<div ng-repeat="x in teamplayer[batting]" class="col-lg-6">
+				<label >
+					<label ng-if="x.wicket==undefined">*</label>{{x.name}}
+				</label>
+				<label >
+					{{x.runs}}
+				</label>
+				<label >
+					{{x.balls}}
+				</label>
+				<label ng-if="x.wicket != undefined">
+					<label ng-if="x.wicket !=undefined">(B) {{x.wicket}}</label>
+					<label ng-if="x.throw !=undefined">runout {{x.throw}}</label>
+					<label ng-if="x.catch !=undefined">(C) {{x.catch}}</label>
+					<label ng-if="x.stump !=undefined">{{x.stump}}</label>
+				</label>
+			</div>
+		</div>
+		<div class="row">
+			<button class ="btn btn-warning col-lg-1 col-lg-offset-6" ng-click="navigate('p3')">Go!</button>
+		</div>
+	</div>
+	<div ng-if = "page == 'wide'">
+		<div ng-repeat = "a in [1,2,3,4,5,6,7]">
+				<button ng-click="wide(a)">{{a}}</button>
+		</div>
+	</div>
+</body>
+</html>
