@@ -3,6 +3,7 @@
 <head>
 	<!-- ANGULAR JS CDN -->
 	<script type="text/javascript" src="angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-sanitize.js"></script>
 	<!-- JQUERY SCRIPT FILE -->
 	<script type="text/javascript" src="jquery.min.js"></script>
 	<!-- BOOTSTRAP CDN -->
@@ -70,7 +71,10 @@
 				</div>
 			</div>
 			<div class="row">
-				<button class="btn btn-info col-lg-1 col-lg-offset-6" ng-click="navigate('p2')">Go!</button>
+				<div class="col-lg-1 col-lg-offset-5 col-xs-1 col-xs-offset-5">
+						Number of overs : <input ng-model="team['overs']" type="text" required="true"/><br><br>
+						<button class="btn btn-info" ng-click="navigate('p2');alert(team['overs'])">Go!</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -80,11 +84,8 @@
 	<div ng-if="page=='p2'" style="text-align: center;">
 		<div ng-show="!toss">
 			<h1>Choose Your Choice {{team['teama'].name}}</h1><br>
-			<button type="button" class="btn btn-default btn-circle toss" ng-click="tossfun('head')"><h3>Heads</h3></button>
-			<button type="button" class="btn btn-default btn-circle toss" ng-click="tossfun('tail')"><h3>Tails</h3></button>
-			<br>
-			<select ng-options = "x for x in [2,5,10,15,20,25,30,35,40,45,50]" ng-model="opt">
-			</select>
+			<button type="button" class="btn btn-default btn-circle toss" ng-click="tossfun('head')" style="background-image: url('heads.png');background-size: 100%"></button>
+			<button type="button" class="btn btn-default btn-circle toss" ng-click="tossfun('tail')" style="background-image: url('tails.jpg');background-size: 100%"></button>
 		</div>
 		<label ng-if="toss">{{toss}}  Your Team Won the Toss Choose Your Choice</label><br>
 		<div ng-if="toss != undefined" class="row" style="text-align: center;">
@@ -128,14 +129,25 @@
 			{{(thisover==0.6)? thisover+0.4 : thisover | number:1}} <label ng-repeat="a in overar">&nbsp;<label ng-if="a!=-1">{{(a==-2)?"WK/Lb":(a==0)?".":a}} &nbsp;{{$last?'':','}}</label></label>
 			<h3>Overs</h3>
 			{{overs | number:1}}
+			<h3>Run Rate</h3>
+			{{ (team[batting]['score'] / (num_balls / 6)) | number:2}}
+			<div ng-if="Innigs==1">
+				<h3>Required Run Rate</h3>
+				{{ ((target-team[batting].score) / (opt - overs)) ? (((target-team[batting].score) / (opt - overs)) | number:2) : ""}}
+			</div>
 		</div>
 		<div class="col-lg-6">
-			<label ng-if="Innigs==1">Target {{target}}<br>Required {{target-team[batting].score}} in {{limitedovers-overs}}</label>
+			<label ng-if="Innigs==1">Target {{target}}<br>Required {{target-team[batting].score}} in {{((limitedovers-overs) * -1 )| number:2}}</label>
+		</div>
+		<div class="row">
+				<div class="col-lg-11"  style="margin-left: 20px;" ng-bind-html="com">
+				</div>
+			</div>
 		</div>
 	</div>
 
 	<!--   Page-3 ends    --> 
-	<!-- batsmen selection-->
+	<!-- inning_break selection-->
 
 	<div ng-if="page=='batsmen'" style="text-align: center;">
 		<!-- Opening Selection -->
@@ -202,86 +214,124 @@
 
 	<!-- batsmen selection ends -->
 	<!-- wicket section -->
-	<div ng-if="page=='wickets'">
-		<div ng-if="iscatch">
-			<label>Bowler Who Is Out</label>
-			<select ng-model="ipbol">
-				<option ng-repeat="(y,x) in teamplayer[bowling]"  value="{{y}}" >{{x.name}}</option>
-			</select>
-			<button ng-click="out('catch',ipbol,runs,null)">Go!</button>
-		</div>
-
-
-		<div ng-if="isstump">
-
-			<button ng-click="out('stump',null,0,null)">Go!</button>
-		</div>
-
-
-		<div ng-if="isrunout">
-			<input type="number" ng-model="runs" >
-			<select ng-model="ipbat">
-				<option value="{{striker}}">{{teamplayer[batting][striker].name}}</option>
-				<option value="{{nonstriker}}">{{teamplayer[batting][nonstriker].name}}</option>
-			</select>
-			<select ng-model="ipbol">
-				<option ng-repeat="(y,x) in teamplayer[bowling]" ng-if="y != bowler" value="{{y}}" >{{x.name}}</option>
-			</select>
-			<button ng-click="out('runout',ipbol,runs,ipbat)">Go!</button>
-		</div>
-		<button ng-click="out('wicket',null,0,null)" >Wicket/Lbw</button>
-		<button ng-click="iscatch = 1" >Catch</button><!-- ip for catcher runs for runs -->
-		<button ng-click="isstump = 1" >Stump</button>
-		<button ng-click="isrunout = 1" >Run Out</button><!-- ip for thrower runs for runs -->
-
+	<div ng-if="page=='wickets'" style="margin-top: 100px;">
+		<center>
+			<div ng-if="iscatch">
+				<label>Bowler Who Is Out</label>
+				<select ng-model="ipbol">
+					<option ng-repeat="(y,x) in teamplayer[bowling]"  value="{{y}}" >{{x.name}}</option>
+				</select>
+				<button class="btn btn-info" ng-click="out('catch',ipbol,runs,null)">Go!</button>
+			</div>
+			<div ng-if="isrunout">
+				<input type="number" min = "0" ng-model="runs" >
+				<select ng-model="ipbat">
+					<option value="{{striker}}">{{teamplayer[batting][striker].name}}</option>
+					<option value="{{nonstriker}}">{{teamplayer[batting][nonstriker].name}}</option>
+				</select>
+				<select ng-model="ipbol">
+					<option ng-repeat="(y,x) in teamplayer[bowling]" ng-if="y != bowler" value="{{y}}" >{{x.name}}</option>
+				</select>
+				<button class="btn btn-info" ng-click="out('runout',ipbol,runs,ipbat)">Go!</button>
+			</div>
+			<button class="btn btn-danger" ng-click="out('wicket',null,0,null)" >Wicket/Lbw</button>
+			<button class="btn btn-danger" ng-click="iscatch = 1;isstump = 0;isrunout = 0" >Catch</button><!-- ip for catcher runs for runs -->
+			<button class="btn btn-danger" ng-click="out('stump',null,0,null)" >Stump</button>
+			<button class="btn btn-danger" ng-click="isrunout = 1;iscatch = 0;isstump = 0" >Run Out</button><!-- ip for thrower runs for runs -->
+		</center>
 	</div>
 
 	<!-- wicket end -->
 	<!--   Page-4 starts Score board	 -->
 	<div ng-if="page=='p4'" class="row display">
-
-		<div ng-repeat="a in team">
-			<div ng-repeat = "b in a">
-				{{b}}
-			</div>
-		</div>
-		<div ng-repeat="a in teamplayer">
-			<div ng-repeat = "b in a">
-				{{b}}
-			</div>
-		</div>
+			<h3>{{winner}}</h3>
+			<div class="container" ng-repeat="y in ['teama','teamb']">    
+					<table class="table table-striped">
+					  <thead>
+						<tr>
+						  <th>{{team[y].name}}</th>
+						  <th>{{team[y].score}}</th>
+						</tr>
+					  </thead>
+					  <tbody>
+						<tr ng-repeat="x in teamplayer[y]">
+						  <td><label ng-if="x.wicket==undefined && x.balls > 0">*</label>{{x.name}}</td>
+						  <td>{{x.runs}} ({{x.balls}})</td>
+						  <td>					<label ng-if="x.wicket != undefined">
+								<label ng-if="x.wicket !=undefined">(B) {{x.wicket}}</label>
+								<label ng-if="x.throw !=undefined">runout {{x.throw}}</label>
+								<label ng-if="x.catch !=undefined">(C) {{x.catch}}</label>
+								<label ng-if="x.stump !=undefined">{{x.stump}}</label>
+							</label>
+						</td>
+						<td>
+							{{((x.runs / x.balls) * 100)?((x.runs / x.balls) * 100 | number: 1) : "Not Yet Bat"}}
+						</td>
+						</tr>
+					  </tbody>
+					</table>
+					<table class="table table-striped">
+							<thead>
+							  <tr>
+								<th>Bowler</th>
+								<th>
+									Overs
+								</th>
+								<th>Runs</th>
+								<th>Wickets</th>
+								<th>Economy</th>
+							  </tr>
+							</thead>
+							<tbody>
+							  <tr ng-repeat="x in teamplayer[y]"  ng-if="x.bowling_balls > 0">
+								<td>{{x.name}}
+								</td>
+								<td>
+									{{x.bowling_balls / 6 | number:1}}
+								</td>
+								<td>
+									{{x.ball_runs}}
+								</td>
+								<td>{{x.wickets}}</td>
+								<td>{{x.runs/(x.bowling_balls/6) | number:2}}</td>
+							  </tr>
+							</tbody>
+						  </table>
+				  </div>		
 
 	</div>
 	<!-- Page-4 Ends  -->
 	<!-- choose batsmen -->
-	<div ng-if="page=='inning_break'" style="text-align: center;">
+	<div ng-if="page=='x'" style="text-align: center;">
 		<div class="row">
-			<div ng-repeat="x in teamplayer[batting]" class="col-lg-6">
-				<label >
-					<label ng-if="x.wicket==undefined">*</label>{{x.name}}
+			<div ng-repeat="x in teamplayer[batting]" class="col-lg-12">
+				<label  class="col-lg-6">
 				</label>
-				<label >
-					{{x.runs}}
-				</label>
-				<label >
-					{{x.balls}}
-				</label>
-				<label ng-if="x.wicket != undefined">
-					<label ng-if="x.wicket !=undefined">(B) {{x.wicket}}</label>
-					<label ng-if="x.throw !=undefined">runout {{x.throw}}</label>
-					<label ng-if="x.catch !=undefined">(C) {{x.catch}}</label>
-					<label ng-if="x.stump !=undefined">{{x.stump}}</label>
-				</label>
+				<div class="col-lg-6">
+					<label>
+					</label>
+					<label >
+						{{x.balls}}
+					</label>
+					<label ng-if="x.wicket != undefined">
+						<label ng-if="x.wicket !=undefined">(B) {{x.wicket}}</label>
+						<label ng-if="x.throw !=undefined">runout {{x.throw}}</label>
+						<label ng-if="x.catch !=undefined">(C) {{x.catch}}</label>
+						<label ng-if="x.stump !=undefined">{{x.stump}}</label>
+					</label>
+				</div>
 			</div>
 		</div>
 		<div class="row">
 			<button class ="btn btn-warning col-lg-1 col-lg-offset-6" ng-click="navigate('p3')">Go!</button>
 		</div>
 	</div>
-	<div ng-if = "page == 'wide'">
-		<div ng-repeat = "a in [1,2,3,4,5,6,7]">
-				<button ng-click="wide(a)">{{a}}</button>
-		</div>
+	<div ng-if = "page == 'wide'" style="margin-top: 100px;">
+		<center>
+			<div ng-repeat = "a in [1,2,3,4,5,6,7]">
+					<button class="btn btn-success" ng-click="wide(a)">{{a}}</button> {{ ( a == 1 ) ? "Run&nbsp;" : "Runs"}}
+			</div>
+		</center>
 	</div>
 </body>
 </html>
